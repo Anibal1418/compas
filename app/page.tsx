@@ -1,82 +1,80 @@
 "use client"
 
-import { useState } from "react"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { TabsNav, type TabId } from "@/components/tabs-nav"
-import { AiCfoChat } from "@/components/ai-cfo-chat"
-import { ExpansionMap } from "@/components/expansion-map"
-import { FinancialHealth } from "@/components/financial-health"
-import { ImpactBanner } from "@/components/impact-banner"
+import { useEffect, useState } from "react"
+import { AssistantScreen } from "@/components/assistant-screen"
+import { BottomNav, type BottomNavId } from "@/components/bottom-nav"
+import { BusinessScreen, type BusinessSection } from "@/components/business-screen"
+import { FinancingScreen } from "@/components/financing-screen"
+import { GrowthScreen } from "@/components/growth-screen"
+import { HomeScreen } from "@/components/home-screen"
+import { MobileAppShell } from "@/components/mobile-app-shell"
+import { SimulationScreen } from "@/components/simulation-screen"
+
+type ScreenId = BottomNavId | "financing"
 
 export default function Page() {
-  const [tab, setTab] = useState<TabId>("dashboard")
+  const [screen, setScreen] = useState<ScreenId>("home")
+  const [businessSection, setBusinessSection] = useState<BusinessSection>("cashflow")
+  const [financingReturnScreen, setFinancingReturnScreen] = useState<BottomNavId>("simulate")
+
+  useEffect(() => {
+    document.getElementById("compas-app-content")?.scrollTo({ top: 0, behavior: "smooth" })
+  }, [screen, businessSection])
+
+  function navigate(nextScreen: BottomNavId) {
+    setScreen(nextScreen)
+  }
+
+  function openBusiness(section: BusinessSection) {
+    setBusinessSection(section)
+    setScreen("business")
+  }
+
+  function openFinancing(from: BottomNavId) {
+    setFinancingReturnScreen(from)
+    setScreen("financing")
+  }
 
   return (
-    <div className="min-h-dvh bg-background">
-      <DashboardHeader />
-      <TabsNav active={tab} onChange={setTab} />
+    <MobileAppShell
+      contentId="compas-app-content"
+      contentLabel="Aplicación Compás"
+      bottomNav={
+        screen !== "financing" ? (
+          <BottomNav active={screen} onChange={navigate} />
+        ) : undefined
+      }
+    >
+      {screen === "home" && (
+        <HomeScreen
+          onOpenCashFlow={() => openBusiness("cashflow")}
+          onOpenHealth={() => openBusiness("health")}
+          onOpenGrow={() => navigate("grow")}
+          onOpenSimulate={() => navigate("simulate")}
+          onOpenAssistant={() => navigate("compass")}
+        />
+      )}
 
-      <main className="mx-auto max-w-[1600px] px-4 py-5 md:px-6">
-        {tab === "dashboard" && (
-          <div className="space-y-4">
-            <div className="grid gap-4 lg:grid-cols-12">
-              <div className="lg:col-span-3">
-                <div className="lg:sticky lg:top-[132px] lg:h-[calc(100dvh-152px)]">
-                  <AiCfoChat />
-                </div>
-              </div>
-              <div className="lg:col-span-6">
-                <ExpansionMap />
-              </div>
-              <div className="lg:col-span-3">
-                <FinancialHealth />
-              </div>
-            </div>
-            <ImpactBanner />
-          </div>
-        )}
+      {screen === "business" && (
+        <BusinessScreen
+          section={businessSection}
+          onSectionChange={setBusinessSection}
+          onOpenFinancing={() => openFinancing("business")}
+          onGoGrow={() => navigate("grow")}
+        />
+      )}
 
-        {tab === "geo" && (
-          <div className="grid gap-4 lg:grid-cols-12">
-            <div className="lg:col-span-8">
-              <ExpansionMap />
-            </div>
-            <div className="lg:col-span-4">
-              <div className="h-[calc(100dvh-172px)] min-h-[520px]">
-                <AiCfoChat />
-              </div>
-            </div>
-          </div>
-        )}
+      {screen === "grow" && <GrowthScreen onSimulate={() => navigate("simulate")} />}
 
-        {tab === "risk" && (
-          <div className="space-y-4">
-            <ImpactBanner />
-            <div className="grid gap-4 lg:grid-cols-12">
-              <div className="lg:col-span-7">
-                <ExpansionMap />
-              </div>
-              <div className="lg:col-span-5">
-                <div className="h-[calc(100dvh-172px)] min-h-[520px]">
-                  <AiCfoChat />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+      {screen === "simulate" && (
+        <SimulationScreen onFinancing={() => openFinancing("simulate")} />
+      )}
 
-        {tab === "loans" && (
-          <div className="mx-auto grid max-w-4xl gap-4 lg:grid-cols-2">
-            <FinancialHealth />
-            <div className="flex flex-col gap-4">
-              <ImpactBanner />
-              <div className="min-h-[420px] flex-1">
-                <AiCfoChat />
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
-    </div>
+      {screen === "compass" && <AssistantScreen />}
+
+      {screen === "financing" && (
+        <FinancingScreen onBack={() => setScreen(financingReturnScreen)} />
+      )}
+    </MobileAppShell>
   )
 }
