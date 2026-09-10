@@ -3,19 +3,17 @@ import type { Metadata, Viewport } from "next"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Compás · App Popular",
+  title: "Compás · Comerza",
   description:
-    "Una experiencia de inteligencia financiera para tomar decisiones de crecimiento responsables.",
-  generator: "v0.app",
+    "Prototipo móvil de orientación para evaluar oportunidades y financiamiento responsable.",
 }
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
   viewportFit: "cover",
   colorScheme: "light",
-  themeColor: "#003b73",
+  themeColor: "#ff8a00",
 }
 
 export default function RootLayout({

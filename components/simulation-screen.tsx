@@ -1,156 +1,212 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import type { KeyboardEvent } from "react"
 import {
+  ArrowLeft,
   ArrowRight,
   BarChart3,
-  CalendarClock,
-  CircleDollarSign,
   Gauge,
   Lightbulb,
   MapPin,
+  MessageCircle,
+  PackageOpen,
+  ReceiptText,
+  ShieldAlert,
+  WalletCards,
 } from "lucide-react"
 
 import {
-  financingData,
+  calculateScenarioResult,
+  formatDop,
+  fundingPlans,
+  getScenarioDefinitions,
   locations,
-  scenarios,
+  type FundingNeedId,
+  type LocationId,
   type RiskLevel,
   type ScenarioId,
 } from "@/lib/demo-data"
 import { cn } from "@/lib/utils"
+import { DecisionProgress } from "@/components/decision-progress"
 
 type SimulationScreenProps = {
-  onFinancing?: () => void
+  selectedNeedId: FundingNeedId
+  selectedLocationId: LocationId
+  selectedScenarioId: ScenarioId
+  onScenarioChange: (scenarioId: ScenarioId) => void
+  onBack: () => void
+  onRecommendation: () => void
+  onOpenAssistant?: () => void
 }
 
-const scenarioOrder: ScenarioId[] = [
-  "base",
-  "sales-down-20",
-  "rent-up-15",
-  "sales-up-15",
-  "additional-employee",
-]
-
-const riskStyles: Record<RiskLevel, { badge: string; bar: string; chart: string }> = {
+const riskStyles: Record<RiskLevel, { badge: string; chart: string }> = {
   Bajo: {
-    badge: "bg-emerald-50 text-emerald-700 ring-emerald-600/15",
-    bar: "bg-emerald-500",
-    chart: "#13a675",
+    badge: "bg-emerald-100 text-emerald-900 ring-emerald-300",
+    chart: "#00aeb6",
   },
   Moderado: {
-    badge: "bg-amber-50 text-amber-700 ring-amber-600/15",
-    bar: "bg-amber-500",
-    chart: "#e99a16",
+    badge: "bg-amber-100 text-amber-950 ring-amber-300",
+    chart: "#d98a0b",
   },
   Alto: {
-    badge: "bg-red-50 text-red-700 ring-red-600/15",
-    bar: "bg-red-500",
-    chart: "#df4d4d",
+    badge: "bg-red-100 text-red-900 ring-red-300",
+    chart: "#d63f48",
   },
 }
 
-const currency = new Intl.NumberFormat("es-DO", {
-  style: "currency",
-  currency: "DOP",
-  maximumFractionDigits: 0,
-})
+export function SimulationScreen({
+  selectedNeedId,
+  selectedLocationId,
+  selectedScenarioId,
+  onScenarioChange,
+  onBack,
+  onRecommendation,
+  onOpenAssistant,
+}: SimulationScreenProps) {
+  const plan = fundingPlans[selectedNeedId]
+  const location = selectedNeedId === "location"
+    ? locations.find((item) => item.id === selectedLocationId)
+    : undefined
+  const orderedScenarios = getScenarioDefinitions(selectedNeedId)
+  const activeScenario = orderedScenarios.find((scenario) => scenario.id === selectedScenarioId)
 
-const recommendedLocation = locations.find((location) => location.id === "los-prados")
+  if (!activeScenario || selectedNeedId === "location" && !location) return null
 
-export function SimulationScreen({ onFinancing }: SimulationScreenProps) {
-  const [activeId, setActiveId] = useState<ScenarioId>("base")
+  const result = calculateScenarioResult(selectedNeedId, selectedScenarioId, selectedLocationId)
+  const tone = riskStyles[result.risk]
+  const NeedIcon = selectedNeedId === "location"
+    ? MapPin
+    : selectedNeedId === "equipment"
+      ? PackageOpen
+      : selectedNeedId === "working-capital"
+        ? WalletCards
+        : ReceiptText
 
-  const orderedScenarios = useMemo(
-    () =>
-      scenarioOrder
-        .map((id) => scenarios.find((scenario) => scenario.id === id))
-        .filter((scenario): scenario is (typeof scenarios)[number] => Boolean(scenario)),
-    [],
-  )
-  const active =
-    orderedScenarios.find((scenario) => scenario.id === activeId) ??
-    orderedScenarios[0]
+  function handleScenarioKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    currentIndex: number,
+  ) {
+    const key = event.key
+    if (!["ArrowDown", "ArrowRight", "ArrowUp", "ArrowLeft", "Home", "End"].includes(key)) {
+      return
+    }
 
-  if (!active) return null
+    event.preventDefault()
+    const group = event.currentTarget.closest('[role="radiogroup"]')
+    let nextIndex = currentIndex
 
-  const tone = riskStyles[active.risk]
+    if (key === "ArrowDown" || key === "ArrowRight") {
+      nextIndex = (currentIndex + 1) % orderedScenarios.length
+    } else if (key === "ArrowUp" || key === "ArrowLeft") {
+      nextIndex = (currentIndex - 1 + orderedScenarios.length) % orderedScenarios.length
+    } else if (key === "Home") {
+      nextIndex = 0
+    } else if (key === "End") {
+      nextIndex = orderedScenarios.length - 1
+    }
+
+    const nextScenario = orderedScenarios[nextIndex]
+    onScenarioChange(nextScenario.id)
+    requestAnimationFrame(() => {
+      group
+        ?.querySelector<HTMLButtonElement>(`[data-scenario-option="${nextScenario.id}"]`)
+        ?.focus()
+    })
+  }
 
   return (
-    <div className="min-h-full bg-[#f4f7fb] pb-8 text-[#092957]">
-      <header className="rounded-b-[2rem] bg-gradient-to-br from-[#073c82] via-[#07529a] to-[#0788b9] px-5 pb-8 pt-[max(1.5rem,env(safe-area-inset-top))] text-white shadow-[0_16px_40px_rgba(3,51,115,0.2)]">
+    <div className="min-h-full bg-comerza-canvas pb-8 text-comerza-navy">
+      <header className="comerza-header px-5 pb-7 pt-[max(1rem,env(safe-area-inset-top))]">
+        <button
+          aria-label="Volver a la configuración del caso"
+          className="comerza-focus mb-3 flex size-11 touch-manipulation items-center justify-center rounded-xl bg-white/45 text-comerza-navy ring-1 ring-comerza-navy/10 focus-visible:outline-none"
+          onClick={onBack}
+          type="button"
+        >
+          <ArrowLeft aria-hidden="true" className="size-5" />
+        </button>
+
         <div className="flex items-center gap-3">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-white/14 ring-1 ring-white/20">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white/45 ring-1 ring-comerza-navy/10">
             <Gauge aria-hidden="true" className="size-5" />
           </span>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-cyan-100">
-              Prueba tu decisión
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-comerza-navy/65">
+              Prueba de capacidad
             </p>
-            <h1 className="text-[1.65rem] font-bold leading-tight">Simular apertura</h1>
+            <h1
+              className="text-[1.65rem] font-bold leading-tight outline-none"
+              data-screen-title
+              id="simulation-title"
+              tabIndex={-1}
+            >
+              Prueba tu financiamiento
+            </h1>
           </div>
         </div>
 
-        <div className="mt-5 rounded-2xl bg-white/11 p-4 ring-1 ring-white/18">
+        <div className="mt-5 rounded-xl bg-white/55 p-4 ring-1 ring-comerza-navy/10">
           <div className="flex items-center gap-2 text-sm font-bold">
-            <MapPin className="size-4 text-[#ffc15b]" />
-            Nueva barbería en Los Prados
+            <NeedIcon aria-hidden="true" className="size-4 text-comerza-navy" />
+            {selectedNeedId === "location" && location
+              ? `Segunda barbería en ${location.name}`
+              : plan.title}
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <div>
-              <p className="text-[11px] text-blue-100">Inversión estimada</p>
-              <p className="mt-0.5 text-base font-bold">{currency.format(financingData.investment)}</p>
-            </div>
-            <div>
-              <p className="text-[11px] text-blue-100">Financiamiento</p>
-              <p className="mt-0.5 text-base font-bold">{currency.format(financingData.requestedAmount)}</p>
-            </div>
-            <div>
-              <p className="text-[11px] text-blue-100">Cuota estimada</p>
-              <p className="mt-0.5 text-base font-bold">{currency.format(financingData.estimatedPayment)}</p>
-            </div>
-            <div>
-              <p className="text-[11px] text-blue-100">Alquiler mensual</p>
-              <p className="mt-0.5 text-base font-bold">{currency.format(recommendedLocation?.rent ?? 31_000)}</p>
-            </div>
-          </div>
+          <dl className="mt-3 space-y-2.5">
+            <SummaryRow label={plan.totalLabel} value={formatDop(plan.totalInvestment)} />
+            <SummaryRow label="Financiamiento a evaluar" value={formatDop(plan.financingAmount)} />
+            <SummaryRow
+              label={plan.monthlyCommitmentLabel}
+              value={plan.monthlyCommitment > 0 ? formatDop(plan.monthlyCommitment) : "No estimada"}
+            />
+            {location ? <SummaryRow label="Alquiler mensual" value={formatDop(location.rent)} /> : null}
+          </dl>
         </div>
+
+        <DecisionProgress className="mt-5 border-comerza-navy/10 bg-white/70" label="Probar" step={5} />
       </header>
 
-      <main className="space-y-5 px-4 pt-5">
+      <div className="space-y-5 px-4 pt-5">
         <fieldset>
-          <legend className="px-1 text-lg font-bold text-[#082d63]">¿Qué podría cambiar?</legend>
-          <p className="mt-1 px-1 text-xs leading-5 text-[#607891]">
-            Elige un escenario para recalcular el flujo y la resiliencia.
+          <legend className="px-1 text-lg font-bold text-comerza-navy">¿Qué podría cambiar?</legend>
+          <p className="mt-1 px-1 text-xs leading-5 text-comerza-muted">
+            Elige un escenario para recalcular el efecto del plan sobre la caja del negocio.
           </p>
 
-          <div className="mt-3 space-y-2.5" role="radiogroup">
-            {orderedScenarios.map((scenario) => {
-              const selected = scenario.id === activeId
+          <div
+            aria-label="Escenario para la prueba de financiamiento"
+            className="mt-3 space-y-2.5"
+            role="radiogroup"
+          >
+            {orderedScenarios.map((scenario, index) => {
+              const selected = scenario.id === selectedScenarioId
               return (
                 <button
                   key={scenario.id}
                   aria-checked={selected}
                   className={cn(
-                    "flex min-h-14 w-full touch-manipulation items-center gap-3 rounded-2xl bg-white px-4 py-3 text-left shadow-[0_6px_20px_rgba(8,45,99,0.06)] ring-1 ring-[#dbe5f0] transition motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0b6bb8]/25",
-                    selected && "bg-[#edf6ff] ring-2 ring-[#0b64ad]",
+                    "comerza-focus flex min-h-14 w-full touch-manipulation items-center gap-3 rounded-xl bg-white px-4 py-3 text-left shadow-[0_3px_12px_rgba(0,46,109,0.06)] ring-1 ring-comerza-border transition motion-reduce:transition-none focus-visible:outline-none",
+                    selected && "bg-comerza-cyan-soft ring-2 ring-comerza-cyan",
                   )}
-                  onClick={() => setActiveId(scenario.id)}
+                  data-scenario-option={scenario.id}
+                  onClick={() => onScenarioChange(scenario.id)}
+                  onKeyDown={(event) => handleScenarioKeyDown(event, index)}
                   role="radio"
+                  tabIndex={selected ? 0 : -1}
                   type="button"
                 >
                   <span
                     aria-hidden="true"
                     className={cn(
-                      "flex size-5 shrink-0 items-center justify-center rounded-full border-2 border-[#9aafc3] bg-white",
-                      selected && "border-[#0b64ad]",
+                      "flex size-5 shrink-0 items-center justify-center rounded-full border-2 border-comerza-muted bg-white",
+                      selected && "border-comerza-cyan",
                     )}
                   >
-                    {selected && <span className="size-2.5 rounded-full bg-[#0b64ad]" />}
+                    {selected && <span className="size-2.5 rounded-full bg-comerza-cyan" />}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-bold text-[#12365f]">{scenario.label}</span>
-                    <span className="mt-0.5 block text-xs leading-5 text-[#647d94]">
+                    <span className="block text-sm font-bold text-comerza-navy">{scenario.label}</span>
+                    <span className="mt-0.5 block text-xs leading-5 text-comerza-muted">
                       {scenario.description}
                     </span>
                   </span>
@@ -163,113 +219,161 @@ export function SimulationScreen({ onFinancing }: SimulationScreenProps) {
         <section
           aria-labelledby="result-title"
           aria-live="polite"
-          className="overflow-hidden rounded-[1.6rem] bg-white shadow-[0_10px_30px_rgba(8,45,99,0.09)] ring-1 ring-[#dbe5f0]"
+          className="comerza-card overflow-hidden"
         >
-          <div className="bg-[#082f68] p-5 text-white">
+          <div className="bg-comerza-navy p-5 text-white">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.13em] text-blue-200">
+                <p className="text-xs font-semibold uppercase tracking-[0.13em] text-comerza-cyan">
                   Resultado estimado
                 </p>
                 <h2 id="result-title" className="mt-1 text-xl font-bold">
-                  {active.shortLabel}
+                  {activeScenario.shortLabel}
                 </h2>
               </div>
               <span className={cn("rounded-full px-3 py-1.5 text-xs font-bold ring-1", tone.badge)}>
-                Riesgo {active.risk.toLowerCase()}
+                Riesgo {result.risk.toLowerCase()}
               </span>
             </div>
 
-            <div className="mt-5 grid grid-cols-[auto_1fr] items-center gap-4">
-              <ScoreRing value={active.score} />
-              <div>
-                <p className="text-xs text-blue-200">Flujo mensual estimado</p>
+            <div className="mt-5 flex items-center gap-4">
+              <ScoreRing color={tone.chart} value={result.resilienceScore} />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-white/70">{result.resultMetricLabel}</p>
                 <p
                   className={cn(
-                    "mt-1 text-2xl font-extrabold",
-                    active.cashFlow < 0 ? "text-[#ff9e9e]" : "text-white",
+                    "mt-1 break-words text-2xl font-extrabold",
+                    result.monthlyFlow < 0 ? "text-[#ffb3b3]" : "text-white",
                   )}
                 >
-                  {active.cashFlow > 0 ? "+" : ""}
-                  {currency.format(active.cashFlow)}
+                  {result.monthlyFlow > 0 ? "+" : ""}
+                  {formatDop(result.monthlyFlow)}
                 </p>
-                <p className="mt-1 text-xs leading-5 text-blue-100">{active.status}</p>
+                <p className="mt-1 text-xs leading-5 text-white/70">{result.status}</p>
               </div>
             </div>
           </div>
 
           <div className="p-5">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <BarChart3 className="size-4 text-[#0b5aa3]" />
-                <h3 className="text-sm font-bold text-[#12365f]">Impacto en seis meses</h3>
+                <BarChart3 aria-hidden="true" className="size-4 text-comerza-navy" />
+                <h3 className="text-sm font-bold text-comerza-navy">Impacto en seis meses</h3>
               </div>
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-[#70859a]">
-                Flujo mensual
-              </span>
+              <span className="text-xs font-semibold text-comerza-muted">{result.resultMetricLabel}</span>
             </div>
 
-            <ScenarioChart color={tone.chart} values={active.chart} />
-            <p className="mt-2 text-sm leading-6 text-[#49657f]">{active.impact}</p>
+            <ScenarioChart color={tone.chart} values={result.chartValues} />
+            <p className="mt-2 text-sm leading-6 text-comerza-muted">{result.impact}</p>
 
-            {active.recoveryMonths != null && (
-              <div className="mt-4 flex min-h-11 items-center gap-3 rounded-xl border border-[#e0e8f1] px-3 py-2.5">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#edf4fb] text-[#0b5aa3]">
-                  <CalendarClock className="size-4" />
+            <div
+              className={cn(
+                "mt-4 rounded-2xl p-4 ring-1",
+                result.isSustainable
+                  ? "bg-[#fff7e9] ring-[#efd49e]"
+                  : "bg-[#fff0f1] ring-[#efc5c8]",
+              )}
+            >
+              <div className="flex gap-3">
+                <span
+                  className={cn(
+                    "flex size-9 shrink-0 items-center justify-center rounded-xl text-white",
+                    result.isSustainable ? "bg-[#d97f00]" : "bg-[#c8343d]",
+                  )}
+                >
+                  {result.isSustainable ? (
+                    <Lightbulb aria-hidden="true" className="size-4" />
+                  ) : (
+                    <ShieldAlert aria-hidden="true" className="size-4" />
+                  )}
                 </span>
                 <div>
-                  <p className="text-[11px] font-medium text-[#70859a]">Recuperación estimada</p>
-                  <p className="mt-0.5 text-sm font-bold text-[#12365f]">
-                    {active.recoveryMonths} meses
+                  <p
+                    className={cn(
+                      "text-xs font-bold uppercase tracking-[0.12em]",
+                      result.isSustainable ? "text-[#824900]" : "text-[#9d242c]",
+                    )}
+                  >
+                    {result.isSustainable ? "Recomendación Compás" : "Conclusión protectora"}
                   </p>
+                  <p
+                    className={cn(
+                      "mt-1.5 text-sm leading-6",
+                      result.isSustainable ? "text-[#5d431d]" : "text-[#76252b]",
+                    )}
+                  >
+                    {result.recommendation}
+                  </p>
+                  {!result.isSustainable && (
+                    <p className="mt-2 text-sm font-semibold leading-6 text-[#76252b]">
+                      Con flujo negativo, Compás pausa el paso de solicitud para proteger la
+                      operación actual.
+                    </p>
+                  )}
                 </div>
               </div>
+            </div>
+
+            {result.isSustainable ? (
+              <button
+                className="comerza-primary-action comerza-focus mt-5 flex min-h-12 w-full touch-manipulation items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold transition active:translate-y-px motion-reduce:transition-none focus-visible:outline-none"
+                onClick={onRecommendation}
+                type="button"
+              >
+                Ver recomendación de producto
+                <ArrowRight aria-hidden="true" className="size-4" />
+              </button>
+            ) : (
+              <button
+                className="mt-5 flex min-h-12 w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-[#dce3ea] px-4 text-sm font-bold text-[#52677b]"
+                disabled
+                type="button"
+              >
+                <ShieldAlert aria-hidden="true" className="size-4" />
+                Solicitud pausada en este escenario
+              </button>
             )}
 
-            <div className="mt-4 rounded-2xl bg-[#fff7e9] p-4 ring-1 ring-[#f5dfb7]">
-              <div className="flex gap-3">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#f39200] text-white">
-                  <Lightbulb className="size-4" />
-                </span>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#9a5700]">
-                    Recomendación Compás
-                  </p>
-                  <p className="mt-1.5 text-sm leading-6 text-[#654b25]">{active.recommendation}</p>
-                </div>
-              </div>
-            </div>
-
-            <button
-              className="mt-5 flex min-h-12 w-full touch-manipulation items-center justify-center gap-2 rounded-xl bg-[#f39200] px-4 text-sm font-bold text-white shadow-[0_8px_20px_rgba(243,146,0,0.28)] transition active:translate-y-px motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#f39200]/35"
-              onClick={onFinancing}
-              type="button"
-            >
-              Ver financiamiento responsable
-              <ArrowRight className="size-4" />
-            </button>
+            {onOpenAssistant && (
+              <button
+                className="comerza-focus mt-2 flex min-h-11 w-full touch-manipulation items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold text-comerza-navy focus-visible:outline-none"
+                onClick={onOpenAssistant}
+                type="button"
+              >
+                <MessageCircle aria-hidden="true" className="size-4" />
+                Consultar este escenario
+              </button>
+            )}
           </div>
         </section>
-      </main>
+      </div>
     </div>
   )
 }
 
-function ScoreRing({ value }: { value: number }) {
+function SummaryRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex min-h-7 items-center justify-between gap-3 text-xs">
+      <dt>{label}</dt>
+      <dd className="text-right font-bold">{value}</dd>
+    </div>
+  )
+}
+
+function ScoreRing({ color, value }: { color: string; value: number }) {
   return (
     <div
       aria-label={`Resiliencia ${value} de 100`}
+      aria-valuemax={100}
+      aria-valuemin={0}
+      aria-valuenow={value}
       className="grid size-[86px] shrink-0 place-items-center rounded-full p-[7px]"
-      role="img"
-      style={{
-        background: `conic-gradient(#56d5b0 ${value * 3.6}deg, rgba(255,255,255,.16) 0deg)`,
-      }}
+      role="progressbar"
+      style={{ background: `conic-gradient(${color} ${value * 3.6}deg, rgba(255,255,255,.2) 0deg)` }}
     >
-      <div className="flex size-full flex-col items-center justify-center rounded-full bg-[#082f68]">
+      <div className="flex size-full flex-col items-center justify-center rounded-full bg-comerza-navy">
         <span className="text-2xl font-extrabold leading-none">{value}</span>
-        <span className="mt-1 text-[9px] font-semibold uppercase tracking-wide text-blue-200">
-          resiliencia
-        </span>
+        <span className="mt-1 text-xs font-semibold text-white/70">de 100</span>
       </div>
     </div>
   )
@@ -277,45 +381,38 @@ function ScoreRing({ value }: { value: number }) {
 
 function ScenarioChart({ color, values }: { color: string; values: readonly number[] }) {
   const maxAbsolute = Math.max(...values.map((value) => Math.abs(value)), 1)
-  const baseline = 88
-  const step = 284 / Math.max(values.length, 1)
+  const baseline = 86
+  const step = 282 / Math.max(values.length, 1)
   const barWidth = Math.min(30, step - 8)
 
   return (
-    <div className="mt-4 rounded-2xl bg-[#f6f8fb] px-2 py-3 ring-1 ring-[#e4eaf1]">
+    <div className="mt-4 rounded-xl bg-comerza-canvas px-2 py-3 ring-1 ring-comerza-border">
       <svg
-        aria-label={`Proyección mensual: ${values.map((value) => currency.format(value)).join(", ")}`}
+        aria-label={`Proyección mensual: ${values.map((value) => formatDop(value)).join(", ")}`}
         className="h-36 w-full"
         preserveAspectRatio="none"
         role="img"
         viewBox="0 0 320 132"
       >
-        <line stroke="#c9d4df" strokeDasharray="3 4" x1="18" x2="310" y1={baseline} y2={baseline} />
-        <text fill="#8294a7" fontSize="8" x="2" y={baseline + 3}>
+        <line stroke="#a9afb7" strokeDasharray="3 4" x1="18" x2="310" y1={baseline} y2={baseline} />
+        <text fill="#566477" fontSize="12" fontWeight="600" x="2" y={baseline - 4}>
           0
         </text>
         {values.map((value, index) => {
-          const height = (Math.abs(value) / maxAbsolute) * (value >= 0 ? 65 : 31)
+          const height = (Math.abs(value) / maxAbsolute) * (value >= 0 ? 62 : 30)
           const x = 24 + index * step + (step - barWidth) / 2
           const y = value >= 0 ? baseline - height : baseline
           return (
             <g key={`${index}-${value}`}>
               <rect
-                fill={value < 0 ? "#df4d4d" : color}
+                fill={value < 0 ? "#d63f48" : color}
                 height={Math.max(height, 2)}
                 rx="5"
                 width={barWidth}
                 x={x}
                 y={y}
               />
-              <text
-                fill="#637a91"
-                fontSize="8"
-                fontWeight="600"
-                textAnchor="middle"
-                x={x + barWidth / 2}
-                y="126"
-              >
+              <text fill="#566477" fontSize="12" fontWeight="600" textAnchor="middle" x={x + barWidth / 2} y="126">
                 M{index + 1}
               </text>
             </g>

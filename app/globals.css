@@ -43,6 +43,16 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-comerza-orange: var(--comerza-orange);
+  --color-comerza-orange-soft: var(--comerza-orange-soft);
+  --color-comerza-navy: var(--comerza-navy);
+  --color-comerza-cyan: var(--comerza-cyan);
+  --color-comerza-cyan-dark: var(--comerza-cyan-dark);
+  --color-comerza-cyan-soft: var(--comerza-cyan-soft);
+  --color-comerza-canvas: var(--comerza-canvas);
+  --color-comerza-surface: var(--comerza-surface);
+  --color-comerza-border: var(--comerza-border);
+  --color-comerza-muted: var(--comerza-muted);
   --radius-sm: calc(var(--radius) * 0.55);
   --radius-md: calc(var(--radius) * 0.75);
   --radius-lg: var(--radius);
@@ -54,29 +64,29 @@
 
 :root {
   color-scheme: light;
-  --background: #eef3f7;
-  --foreground: #10264b;
+  --background: #f4f4f2;
+  --foreground: #002e6d;
   --card: #ffffff;
-  --card-foreground: #10264b;
+  --card-foreground: #002e6d;
   --popover: #ffffff;
-  --popover-foreground: #10264b;
-  --primary: #003b73;
+  --popover-foreground: #002e6d;
+  --primary: #002e6d;
   --primary-foreground: #ffffff;
-  --secondary: #edf3f8;
-  --secondary-foreground: #163c68;
-  --muted: #f3f6f9;
-  --muted-foreground: #66758b;
-  --accent: #e7f7f8;
-  --accent-foreground: #007c88;
+  --secondary: #f0f1f2;
+  --secondary-foreground: #233f68;
+  --muted: #f4f4f2;
+  --muted-foreground: #5e6878;
+  --accent: #e5f8f8;
+  --accent-foreground: #006f75;
   --destructive: #bd3d42;
-  --border: #dbe4ec;
-  --input: #cfdbe5;
-  --ring: #087ead;
-  --navy: #003b73;
+  --border: #dcdfe3;
+  --input: #cfd3d8;
+  --ring: #002e6d;
+  --navy: #002e6d;
   --navy-foreground: #ffffff;
-  --orange: #f39400;
-  --orange-foreground: #ffffff;
-  --violet: #00879b;
+  --orange: #ff8a00;
+  --orange-foreground: #002e6d;
+  --violet: #00aeb6;
   --violet-foreground: #ffffff;
   --success: #117f61;
   --success-soft: #e7f5ef;
@@ -84,14 +94,24 @@
   --warning-soft: #fff4df;
   --risk: #b93f45;
   --risk-soft: #fcecee;
-  --compas: #00879b;
-  --compas-soft: #e5f6f8;
-  --chart-1: #003b73;
-  --chart-2: #00879b;
-  --chart-3: #f39400;
+  --compas: #00aeb6;
+  --compas-soft: #e5f8f8;
+  --chart-1: #002e6d;
+  --chart-2: #00aeb6;
+  --chart-3: #ff8a00;
   --chart-4: #117f61;
   --chart-5: #91a2b5;
-  --radius: 1rem;
+  --comerza-orange: #ff8a00;
+  --comerza-orange-soft: #fff1dd;
+  --comerza-navy: #002e6d;
+  --comerza-cyan: #00bcc4;
+  --comerza-cyan-dark: #006f75;
+  --comerza-cyan-soft: #e5f8f8;
+  --comerza-canvas: #f4f4f2;
+  --comerza-surface: #ffffff;
+  --comerza-border: #dcdfe3;
+  --comerza-muted: #566477;
+  --radius: 0.75rem;
 }
 
 @layer base {
@@ -102,7 +122,7 @@
 
   html {
     min-width: 320px;
-    background: #dce8f2;
+    background: #e8e6e1;
   }
 
   body {
@@ -112,8 +132,8 @@
     margin: 0;
     overflow-x: hidden;
     background-image:
-      radial-gradient(circle at 12% 10%, rgb(0 135 155 / 12%), transparent 30rem),
-      linear-gradient(145deg, #eaf2f7 0%, #dce8f2 52%, #edf3f7 100%);
+      radial-gradient(circle at 12% 8%, rgb(255 138 0 / 10%), transparent 28rem),
+      linear-gradient(145deg, #efede9 0%, #e4e3df 55%, #f3f1ed 100%);
   }
 
   button,
@@ -132,7 +152,46 @@
   }
 
   ::selection {
-    background: rgb(0 135 155 / 22%);
+    background: rgb(0 188 196 / 24%);
+  }
+}
+
+@layer components {
+  .comerza-header {
+    color: var(--comerza-navy);
+    background-color: var(--comerza-orange);
+    background-image: repeating-radial-gradient(
+      circle at 108% -16%,
+      transparent 0 17px,
+      rgb(255 255 255 / 16%) 18px 19px
+    );
+    border-bottom: 1px solid rgb(0 46 109 / 12%);
+    box-shadow: 0 3px 12px rgb(0 46 109 / 10%);
+  }
+
+  .comerza-card {
+    border: 1px solid var(--comerza-border);
+    border-radius: 1rem;
+    background: var(--comerza-surface);
+    box-shadow: 0 3px 12px rgb(0 46 109 / 7%);
+  }
+
+  .comerza-primary-action {
+    color: var(--comerza-navy);
+    background: var(--comerza-cyan);
+    box-shadow: 0 4px 10px rgb(0 132 139 / 18%);
+  }
+
+  .comerza-primary-action:hover {
+    background: #00aeb6;
+  }
+
+  .comerza-focus {
+    outline: none;
+  }
+
+  .comerza-focus:focus-visible {
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--comerza-navy);
   }
 }
 

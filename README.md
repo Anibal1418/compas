@@ -1,33 +1,45 @@
-# compas
+# Compás
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+Prototipo mobile-first de orientación financiera para negocios, presentado como una
+capacidad de Compás integrada visualmente en Comerza. El caso de demostración acompaña
+a Ernesto Matos desde la lectura de su barbería hasta la preparación simulada de una
+evaluación de financiamiento.
 
-## Built with v0
+## Ejecutar el proyecto
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
-
-[Continue working on v0 →](https://v0.app/chat/projects/prj_c0wqYigLGhJkSGiMtZO7rRAOJQ0c)
-
-## Getting Started
-
-First, run the development server:
+Requiere Node.js y Corepack. Desde la raíz del repositorio:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+corepack pnpm install
+corepack pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Luego abre [http://localhost:3000](http://localhost:3000). En escritorio, la interfaz se
+mantiene dentro de un lienzo móvil de 430 px; en un teléfono ocupa todo el ancho.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Recorrido de la demostración
 
-## Learn More
+`Observar → Predecir → Evaluar → Elegir y configurar → Probar → Recomendar → Solicitar`
 
-To learn more, take a look at the following resources:
+Desde `Simular`, el usuario puede evaluar cuatro necesidades con cifras y escenarios
+demostrativos: abrir un local, comprar equipos, fortalecer capital de trabajo o convertir
+facturas por cobrar en liquidez. Los casos que no aplican se detienen antes del stress test
+y cualquier escenario con flujo negativo bloquea el paso de solicitud.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+La aplicación usa datos y respuestas determinísticas en una sola ruta. No incluye APIs,
+backend, persistencia, autenticación, scoring bancario ni envío de solicitudes. Todas las
+precalificaciones, conexiones del ecosistema y confirmaciones se identifican como
+simuladas y sujetas a evaluación de Banco Popular.
+
+## Validar
+
+```bash
+corepack pnpm exec tsc --noEmit --incremental false
+corepack pnpm build
+git diff --check
+```
+
+Las descripciones generales de productos se basan en el
+[catálogo empresarial de Banco Popular](https://popularenlinea.com/empresarial/Paginas/financiamiento/Default.aspx).
+AVANCE se conserva únicamente como referencia contextual cuya vigencia debe validarse
+antes de cualquier uso real.
