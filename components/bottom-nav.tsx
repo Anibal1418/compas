@@ -1,19 +1,21 @@
 "use client"
 
-import { AlertTriangle, Compass, Landmark, LayoutDashboard, MapPin } from "lucide-react"
+import Image from "next/image"
+import { AlertTriangle, Landmark, LayoutDashboard, MapPin, type LucideIcon } from "lucide-react"
 
+import compasIsotipo from "@/components/Compas Isotipo.png"
 import { cn } from "@/lib/utils"
 
 export type BottomNavId = "home" | "business" | "grow" | "simulate" | "compass"
 
 export type MainScreenId = BottomNavId
 
-export type AppScreenId = BottomNavId | "financing"
+export type AppScreenId = BottomNavId | "funding-plan" | "stress-test" | "financing" | "handoff"
 
 export interface BottomNavItem {
   id: BottomNavId
   label: string
-  icon: typeof LayoutDashboard
+  icon?: LucideIcon
 }
 
 export const bottomNavItems: readonly BottomNavItem[] = [
@@ -21,7 +23,7 @@ export const bottomNavItems: readonly BottomNavItem[] = [
   { id: "business", label: "Mi negocio", icon: Landmark },
   { id: "grow", label: "Crecer", icon: MapPin },
   { id: "simulate", label: "Simular", icon: AlertTriangle },
-  { id: "compass", label: "Compás", icon: Compass },
+  { id: "compass", label: "Compás" },
 ]
 
 export interface BottomNavProps {
@@ -41,7 +43,7 @@ export function BottomNav({
     <nav
       aria-label={ariaLabel}
       className={cn(
-        "border-t border-[#dfe5ee] bg-white/95 px-1 pt-1 shadow-[0_-8px_24px_rgba(2,51,115,0.06)] backdrop-blur-md",
+        "border-t border-comerza-border bg-white px-1 pt-1 shadow-[0_-2px_8px_rgba(0,46,109,0.06)]",
         "pb-[calc(env(safe-area-inset-bottom)+0.375rem)]",
         className,
       )}
@@ -60,24 +62,32 @@ export function BottomNav({
               aria-label={item.label}
               className={cn(
                 "relative flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-1.5",
-                "text-[10px] font-medium leading-none transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f39200] focus-visible:ring-offset-1",
-                isActive ? "text-[#023373]" : "text-[#657083] hover:text-[#023373]",
+                "text-xs font-medium leading-none transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-comerza-navy focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                isActive ? "font-bold text-comerza-navy" : "text-[#687282] hover:text-comerza-navy",
               )}
             >
               <span
                 className={cn(
                   "flex size-7 items-center justify-center rounded-lg transition-colors",
-                  isActive ? "bg-[#e8f0fb]" : "bg-transparent",
+                  isActive ? "bg-comerza-cyan-soft text-comerza-cyan-dark" : "bg-transparent",
                 )}
                 aria-hidden="true"
               >
-                <Icon className="size-[18px]" strokeWidth={isActive ? 2.4 : 2} />
+                {item.id === "compass" ? (
+                  <Image
+                    src={compasIsotipo}
+                    alt=""
+                    className="size-[22px] object-contain"
+                  />
+                ) : Icon ? (
+                  <Icon className="size-[18px]" strokeWidth={isActive ? 2.4 : 2} />
+                ) : null}
               </span>
               <span className="max-w-full truncate">{item.label}</span>
               {isActive ? (
                 <span
-                  className="absolute inset-x-5 -top-1 h-0.5 rounded-full bg-[#f39200]"
+                  className="absolute inset-x-5 -top-1 h-0.5 rounded-full bg-comerza-cyan"
                   aria-hidden="true"
                 />
               ) : null}

@@ -3,230 +3,239 @@
 import {
   ArrowRight,
   BarChart3,
-  Compass,
-  MapPinned,
+  Building2,
+  CheckCircle2,
   MessageCircle,
   Scissors,
   ShieldCheck,
-  SlidersHorizontal,
   Sparkles,
-  TrendingUp,
   WalletCards,
 } from "lucide-react"
-import { businessProfile, formatDop } from "@/lib/demo-data"
-import { BrandMark } from "@/components/screen-header"
 
-type HomeScreenProps = {
-  onOpenCashFlow: () => void
-  onOpenHealth: () => void
-  onOpenGrow: () => void
-  onOpenSimulate: () => void
+import { DecisionProgress } from "@/components/decision-progress"
+import { BrandMark } from "@/components/screen-header"
+import {
+  businessProfile,
+  cashFlowData,
+  financialReadiness,
+  formatDop,
+  type BusinessSection,
+} from "@/lib/demo-data"
+
+export type HomeScreenProps = {
+  onOpenBusiness: (section: BusinessSection) => void
+  onOpenGrowth: () => void
   onOpenAssistant: () => void
 }
 
-const capabilities = [
-  {
-    id: "cashflow",
-    title: "Anticipa tu efectivo",
-    description: "Mira cómo podría evolucionar tu caja en 30, 60 y 90 días.",
-    label: "Flujo de caja",
-    icon: BarChart3,
-    tone: "bg-[#e7f3fb] text-[#00689e]",
-  },
-  {
-    id: "health",
-    title: "Conoce tu preparación",
-    description: "Entiende qué está fuerte y qué debes cuidar antes de crecer.",
-    label: "Salud del negocio",
-    icon: ShieldCheck,
-    tone: "bg-success-soft text-success",
-  },
-  {
-    id: "grow",
-    title: "Compara dónde crecer",
-    description: "Cruza demanda, alquiler y la capacidad financiera de tu negocio.",
-    label: "Dónde crecer",
-    icon: MapPinned,
-    tone: "bg-compas-soft text-compas",
-  },
-  {
-    id: "simulate",
-    title: "Prueba antes de decidir",
-    description: "Visualiza cómo respondería tu barbería ante distintos escenarios.",
-    label: "Simular escenarios",
-    icon: SlidersHorizontal,
-    tone: "bg-warning-soft text-warning",
-  },
-] as const
-
 export function HomeScreen({
-  onOpenCashFlow,
-  onOpenHealth,
-  onOpenGrow,
-  onOpenSimulate,
+  onOpenBusiness,
+  onOpenGrowth,
   onOpenAssistant,
 }: HomeScreenProps) {
-  const handlers = {
-    cashflow: onOpenCashFlow,
-    health: onOpenHealth,
-    grow: onOpenGrow,
-    simulate: onOpenSimulate,
-  }
+  const ninetyDayBalance = cashFlowData.projections.find(
+    (projection) => projection.days === 90,
+  )!.balance
 
   return (
-    <div className="bg-background">
-      <header className="safe-top relative overflow-hidden bg-[linear-gradient(145deg,#00356c_0%,#005b94_62%,#00889f_145%)] px-5 pb-24 text-white">
+    <div className="min-w-0 bg-comerza-canvas text-comerza-navy">
+      <header className="comerza-header safe-top relative overflow-hidden px-5 pb-24">
         <div className="pointer-events-none absolute -right-14 -top-20 size-52 rounded-full border border-white/10" />
         <div className="pointer-events-none absolute -right-5 -top-8 size-32 rounded-full border border-white/10" />
         <div className="relative flex items-center justify-between">
           <BrandMark />
-          <div className="flex size-11 items-center justify-center rounded-full bg-white/15 text-sm font-bold ring-1 ring-white/20" aria-label="Perfil de Ernesto Matos">
-            EM
+          <div
+            className="flex size-11 items-center justify-center rounded-full bg-comerza-navy text-sm font-bold text-white ring-1 ring-white/60"
+            aria-label={`Perfil de ${businessProfile.ownerName}`}
+          >
+            {businessProfile.initials}
           </div>
         </div>
 
-        <div className="relative mt-9">
-          <p className="text-sm font-medium text-white/75">Hola, {businessProfile.firstName}</p>
-          <h1 className="mt-1 max-w-xs text-[29px] font-bold leading-[1.14] tracking-[-0.04em] text-balance">
-            Veamos cómo está creciendo tu barbería.
+        <div className="relative mt-8">
+          <p className="text-sm font-semibold text-comerza-navy/75">
+            Hola, {businessProfile.firstName}
+          </p>
+          <h1
+            data-screen-title
+            id="home-screen-title"
+            tabIndex={-1}
+            className="mt-1 max-w-xs text-[28px] font-bold leading-[1.14] tracking-[-0.03em] text-balance text-comerza-navy focus:outline-none"
+          >
+            Tu barbería está lista para evaluar su próximo paso.
           </h1>
         </div>
       </header>
 
-      <main className="relative -mt-16 space-y-5 rounded-t-[28px] bg-background px-4 pb-7 pt-4">
-        <section className="overflow-hidden rounded-[22px] border border-white/70 bg-white shadow-[0_12px_30px_rgba(11,52,91,0.10)]" aria-labelledby="business-summary-title">
-          <div className="flex items-center gap-3 border-b border-border/80 px-4 py-3.5">
-            <span className="flex size-10 items-center justify-center rounded-2xl bg-secondary text-primary">
+      <div className="relative -mt-16 space-y-4 rounded-t-[20px] bg-comerza-canvas px-4 pb-7 pt-4">
+        <section
+          className="comerza-card overflow-hidden"
+          aria-labelledby="business-summary-title"
+        >
+          <div className="flex items-center gap-3 border-b border-comerza-border px-4 py-3.5">
+            <span className="flex size-10 items-center justify-center rounded-xl bg-comerza-cyan-soft text-comerza-cyan-dark">
               <Scissors className="size-5" aria-hidden="true" />
             </span>
-            <div>
-              <h2 id="business-summary-title" className="text-[15px] font-bold text-foreground">{businessProfile.businessName}</h2>
-              <p className="text-xs text-muted-foreground">Resumen de hoy</p>
+            <div className="min-w-0">
+              <h2
+                id="business-summary-title"
+                className="truncate text-[15px] font-bold text-comerza-navy"
+              >
+                {businessProfile.businessName}
+              </h2>
+              <p className="text-xs text-comerza-muted">Resumen de decisión</p>
             </div>
-            <span className="ml-auto rounded-full bg-success-soft px-2.5 py-1 text-xs font-bold text-success">{businessProfile.healthStatus}</span>
+            <span className="ml-auto rounded-full bg-[#e7f5ef] px-2.5 py-1 text-xs font-bold text-[#0d7257]">
+              En buen rumbo
+            </span>
           </div>
 
-          <div className="flex items-center gap-4 px-4 py-5">
-            <HealthRing score={businessProfile.healthScore} />
-            <div className="min-w-0 flex-1 space-y-3">
-              <SummaryRow icon={WalletCards} label="Disponible" value={formatDop(businessProfile.availableCash)} />
-              <SummaryRow icon={TrendingUp} label="Crecimiento" value={`+${businessProfile.growthRate}%`} valueClass="text-success" />
-              <SummaryRow icon={Compass} label="Potencial" value={businessProfile.growthPotential} valueClass="text-compas" />
-            </div>
+          <div className="divide-y divide-comerza-border px-4">
+            <SummaryMetric
+              icon={ShieldCheck}
+              label="Salud del negocio"
+              value={`${businessProfile.healthScore}/100`}
+              detail={businessProfile.healthStatus}
+              tone="success"
+            />
+            <SummaryMetric
+              icon={BarChart3}
+              label="Caja a 90 días"
+              value={formatDop(ninetyDayBalance)}
+              detail="Positiva"
+              tone="success"
+            />
+            <SummaryMetric
+              icon={WalletCards}
+              label="Preparación financiera"
+              value={financialReadiness.status}
+              detail="Estimación"
+              tone="compas"
+            />
           </div>
         </section>
 
-        <section className="rounded-[20px] border border-[#c9e9ed] bg-[linear-gradient(135deg,#e7f7f8_0%,#f4fbfc_100%)] p-4" aria-labelledby="recommendation-title">
+        <DecisionProgress step={1} label="Observar" />
+
+        <section
+          className="comerza-card p-5"
+          aria-labelledby="next-step-title"
+        >
           <div className="flex items-start gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-compas text-white shadow-sm">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-comerza-cyan text-comerza-navy">
               <Sparkles className="size-5" aria-hidden="true" />
             </span>
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-compas">Recomendación de Compás</p>
-              <h2 id="recommendation-title" className="mt-1 text-[16px] font-bold leading-5 text-primary">Puedes comenzar a evaluar una expansión.</h2>
-              <p className="mt-1.5 text-sm leading-5 text-muted-foreground">
-                Tus ingresos crecen de forma estable. Compara ubicaciones y prueba los riesgos antes de comprometerte.
+            <div className="min-w-0">
+              <p className="text-xs font-bold uppercase tracking-[0.1em] text-comerza-cyan-dark">
+                Tu próximo paso
+              </p>
+              <h2
+                id="next-step-title"
+                className="mt-1 text-[18px] font-bold leading-6 text-comerza-navy"
+              >
+                Observa qué sostiene tu crecimiento
+              </h2>
+              <p className="mt-1.5 text-[13px] leading-5 text-comerza-muted">
+                Comienza por tu salud financiera y sigue una ruta guiada hasta probar
+                el financiamiento de una segunda ubicación.
               </p>
             </div>
           </div>
+          <button
+            type="button"
+            onClick={() => onOpenBusiness("health")}
+            className="comerza-primary-action comerza-focus mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-5 text-sm font-bold transition-colors"
+          >
+            Comenzar por mi salud
+            <ArrowRight className="size-[18px]" aria-hidden="true" />
+          </button>
         </section>
 
-        <section aria-labelledby="capabilities-title">
-          <div className="mb-3 flex items-end justify-between">
-            <div>
-              <p className="text-xs font-semibold text-compas">Tu ruta de crecimiento</p>
-              <h2 id="capabilities-title" className="mt-0.5 text-xl font-bold tracking-[-0.025em] text-primary">¿Qué quieres evaluar?</h2>
+        <section
+          className="rounded-2xl border border-[#f3c98e] bg-comerza-orange-soft p-4"
+          aria-labelledby="proactive-signal-title"
+        >
+          <div className="flex items-start gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-comerza-navy">
+              <CheckCircle2 className="size-5" aria-hidden="true" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-[#7a4600]">Detección proactiva</p>
+              <h2
+                id="proactive-signal-title"
+                className="mt-1 text-[16px] font-bold leading-5 text-comerza-navy"
+              >
+                Tu cuota saludable estimada llega hasta {formatDop(financialReadiness.maxHealthyPayment)}.
+              </h2>
+              <p className="mt-1.5 text-[13px] leading-5 text-[#654a25]">
+                La señal combina tu salud actual y el flujo proyectado para mantener
+                una cuota manejable para tu negocio.
+              </p>
             </div>
-            <span className="text-xs text-muted-foreground">4 análisis</span>
           </div>
-
-          <div className="space-y-3">
-            {capabilities.map((item) => {
-              const Icon = item.icon
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={handlers[item.id]}
-                  className="group flex min-h-[104px] w-full items-center gap-3.5 rounded-[20px] border border-border bg-card p-4 text-left shadow-[0_4px_16px_rgba(14,48,78,0.045)] transition duration-200 hover:-translate-y-0.5 hover:border-[#b9cfdf] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  <span className={`flex size-12 shrink-0 items-center justify-center rounded-2xl ${item.tone}`}>
-                    <Icon className="size-6" aria-hidden="true" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground">{item.label}</span>
-                    <span className="mt-0.5 block text-[16px] font-bold text-primary">{item.title}</span>
-                    <span className="mt-1 block text-[13px] leading-[18px] text-muted-foreground">{item.description}</span>
-                  </span>
-                  <ArrowRight className="size-5 shrink-0 text-[#91a2b5] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-                </button>
-              )
-            })}
-          </div>
+          <button
+            type="button"
+            onClick={onOpenGrowth}
+            className="comerza-focus mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-comerza-navy bg-white px-4 text-sm font-bold text-comerza-navy transition-colors hover:bg-[#fffaf1]"
+          >
+            Ver oportunidad detectada
+            <Building2 className="size-[18px]" aria-hidden="true" />
+          </button>
         </section>
 
         <button
           type="button"
           onClick={onOpenAssistant}
-          className="flex min-h-[76px] w-full items-center gap-3 rounded-[20px] bg-primary px-4 py-3.5 text-left text-white shadow-[0_8px_22px_rgba(0,59,115,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="comerza-focus flex min-h-[72px] w-full items-center gap-3 rounded-2xl bg-comerza-navy px-4 py-3.5 text-left text-white shadow-[0_4px_12px_rgba(0,46,109,0.16)]"
         >
           <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-white/15">
             <MessageCircle className="size-5" aria-hidden="true" />
           </span>
-          <span className="flex-1">
-            <span className="block text-[15px] font-bold">Habla con Compás</span>
-            <span className="mt-0.5 block text-xs text-white/70">Pregunta con tus datos en contexto</span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[15px] font-bold">Pregúntale a Compás</span>
+            <span className="mt-0.5 block text-xs text-white/80">
+              Consulta tus cifras y próximos pasos
+            </span>
           </span>
-          <ArrowRight className="size-5 text-white/70" aria-hidden="true" />
+          <ArrowRight className="size-5 shrink-0 text-white/80" aria-hidden="true" />
         </button>
-      </main>
-    </div>
-  )
-}
-
-function HealthRing({ score }: { score: number }) {
-  const circumference = 2 * Math.PI * 39
-  const dash = (score / 100) * circumference
-
-  return (
-    <div className="relative size-[108px] shrink-0" aria-label={`Salud del negocio: ${score} de 100`}>
-      <svg viewBox="0 0 100 100" className="size-full -rotate-90" aria-hidden="true">
-        <circle cx="50" cy="50" r="39" fill="none" stroke="#e8eef3" strokeWidth="9" />
-        <circle
-          cx="50"
-          cy="50"
-          r="39"
-          fill="none"
-          stroke="#117f61"
-          strokeWidth="9"
-          strokeLinecap="round"
-          strokeDasharray={`${dash} ${circumference - dash}`}
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-[27px] font-extrabold leading-none text-primary">{score}</span>
-        <span className="mt-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">de 100</span>
       </div>
     </div>
   )
 }
 
-function SummaryRow({
+function SummaryMetric({
   icon: Icon,
   label,
   value,
-  valueClass = "text-foreground",
+  detail,
+  tone,
 }: {
-  icon: typeof WalletCards
+  icon: typeof ShieldCheck
   label: string
   value: string
-  valueClass?: string
+  detail: string
+  tone: "success" | "compas"
 }) {
+  const toneClasses =
+    tone === "success"
+      ? "bg-[#e7f5ef] text-[#0d7257]"
+      : "bg-comerza-cyan-soft text-comerza-cyan-dark"
+
   return (
-    <div className="flex min-w-0 items-center gap-2.5">
-      <Icon className="size-4 shrink-0 text-[#7d91a5]" aria-hidden="true" />
-      <span className="min-w-0 flex-1 text-xs text-muted-foreground">{label}</span>
-      <span className={`shrink-0 text-sm font-bold ${valueClass}`}>{value}</span>
+    <div className="flex min-h-[78px] items-center gap-3 py-3">
+      <span className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${toneClasses}`}>
+        <Icon className="size-5" aria-hidden="true" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-xs font-medium text-comerza-muted">{label}</span>
+        <span className="mt-0.5 block text-[17px] font-bold tracking-[-0.02em] text-comerza-navy">
+          {value}
+        </span>
+      </span>
+      <span className="shrink-0 rounded-full bg-[#f0f1f2] px-2.5 py-1 text-xs font-semibold text-comerza-muted">
+        {detail}
+      </span>
     </div>
   )
 }
