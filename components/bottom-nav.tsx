@@ -62,16 +62,13 @@ export function BottomNav({
               aria-label={item.label}
               className={cn(
                 "relative flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-1.5",
-                "text-xs font-medium leading-none transition-colors",
+                "text-xs font-medium leading-4 transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-comerza-navy focus-visible:ring-offset-2 focus-visible:ring-offset-white",
                 isActive ? "font-bold text-comerza-navy" : "text-[#687282] hover:text-comerza-navy",
               )}
             >
               <span
-                className={cn(
-                  "flex size-7 items-center justify-center rounded-lg transition-colors",
-                  isActive ? "bg-comerza-cyan-soft text-comerza-cyan-dark" : "bg-transparent",
-                )}
+                className="flex size-7 items-center justify-center rounded-lg bg-transparent text-comerza-cyan transition-colors"
                 aria-hidden="true"
               >
                 {item.id === "compass" ? (
@@ -84,7 +81,7 @@ export function BottomNav({
                   <Icon className="size-[18px]" strokeWidth={isActive ? 2.4 : 2} />
                 ) : null}
               </span>
-              <span className="max-w-full truncate">{item.label}</span>
+              <span className="max-w-full whitespace-nowrap pb-0.5">{item.label}</span>
               {isActive ? (
                 <span
                   className="absolute inset-x-5 -top-1 h-0.5 rounded-full bg-comerza-cyan"

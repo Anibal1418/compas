@@ -279,8 +279,8 @@ const locationById: Record<LocationId, ExpansionLocation> = {
       "Buen tránsito y alto poder adquisitivo, con presión competitiva y un alquiler exigente.",
     financialExplanation:
       "El alquiler representa cerca del 23% de los ingresos actuales y reduce el margen disponible para la cuota.",
-    mapX: 31,
-    mapY: 24,
+    mapX: 70,
+    mapY: 22,
     recommended: false,
   },
   "los-prados": {
@@ -296,8 +296,8 @@ const locationById: Record<LocationId, ExpansionLocation> = {
       "La mejor relación entre demanda, competencia y costo para una segunda barbería.",
     financialExplanation:
       "El alquiler representa cerca del 17% de los ingresos actuales y conserva margen para una cuota responsable.",
-    mapX: 58,
-    mapY: 47,
+    mapX: 21,
+    mapY: 30,
     recommended: true,
   },
   "bella-vista": {
@@ -313,8 +313,8 @@ const locationById: Record<LocationId, ExpansionLocation> = {
       "Mercado atractivo, aunque el alquiler y la competencia reducen el margen inicial.",
     financialExplanation:
       "El alquiler representa cerca del 25% de los ingresos actuales y exige validar mejor la demanda antes de avanzar.",
-    mapX: 72,
-    mapY: 73,
+    mapX: 48,
+    mapY: 74,
     recommended: false,
   },
 }

@@ -6,6 +6,7 @@ import {
   BarChart3,
   CheckCircle2,
   CircleAlert,
+  FileCheck2,
   Landmark,
   Lightbulb,
   MapPin,
@@ -18,6 +19,7 @@ import {
 } from "lucide-react"
 
 import { DecisionProgress } from "@/components/decision-progress"
+import { ScreenHeader } from "@/components/screen-header"
 import {
   businessProfile,
   cashFlowData,
@@ -80,26 +82,16 @@ export function BusinessScreen({
 
   return (
     <div className="min-w-0 bg-comerza-canvas pb-7 text-comerza-navy">
-      <header className="comerza-header safe-top px-5 pb-8">
-        <p className="text-xs font-semibold text-comerza-navy/70">
-          {businessProfile.businessName}
-        </p>
-        <h1
-          data-screen-title
-          id="business-screen-title"
-          tabIndex={-1}
-          className="mt-1 text-[26px] font-bold tracking-[-0.04em] focus:outline-none"
-        >
-          Mi negocio
-        </h1>
-        <p className="mt-1 text-sm leading-5 text-comerza-navy/75">
-          Observa tus cifras, proyecta la caja y evalúa tu preparación.
-        </p>
-      </header>
+      <ScreenHeader title="Mi negocio" />
 
-      <div className="relative -mt-4 px-4">
+      <div className="px-4 pt-5">
+        <DecisionProgress
+          step={currentSection.step}
+          label={currentSection.stage}
+        />
+
         <div
-          className="grid grid-cols-3 rounded-xl border border-comerza-border bg-white p-1 shadow-[0_4px_14px_rgba(0,46,109,0.08)]"
+          className="mt-4 grid grid-cols-3 rounded-xl border border-comerza-border bg-white p-1 shadow-[0_4px_14px_rgba(0,46,109,0.08)]"
           role="tablist"
           aria-label="Secciones de Mi negocio"
         >
@@ -122,7 +114,7 @@ export function BusinessScreen({
                 onKeyDown={(event) => moveTabFocus(event, index)}
                 className={`comerza-focus min-h-11 rounded-lg px-1.5 text-xs font-bold outline-none transition-colors ${
                   selected
-                    ? "bg-comerza-navy text-white"
+                    ? "bg-white text-comerza-navy shadow-[inset_0_-3px_0_var(--comerza-cyan)]"
                     : "text-comerza-muted hover:bg-comerza-canvas"
                 }`}
               >
@@ -131,12 +123,6 @@ export function BusinessScreen({
             )
           })}
         </div>
-
-        <DecisionProgress
-          step={currentSection.step}
-          label={currentSection.stage}
-          className="mt-4"
-        />
 
         <div
           id="business-section-panel"
@@ -161,7 +147,7 @@ export function BusinessScreen({
           onClick={onOpenAssistant}
           className="comerza-focus mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-comerza-navy bg-white px-4 text-sm font-bold text-comerza-navy outline-none transition-colors hover:bg-comerza-cyan-soft"
         >
-          <MessageCircle className="size-[18px]" aria-hidden="true" />
+          <MessageCircle className="size-[18px] text-comerza-cyan" aria-hidden="true" />
           Preguntarle a Compás sobre mis cifras
         </button>
       </div>
@@ -239,11 +225,11 @@ function HealthView({ onContinue }: { onContinue: () => void }) {
       </section>
 
       <section
-        className="rounded-xl border border-comerza-cyan/35 bg-comerza-cyan-soft p-4"
+        className="comerza-card rounded-xl p-4"
         aria-labelledby="health-recommendations-title"
       >
         <div className="flex items-center gap-2 text-comerza-cyan-dark">
-          <Sparkles className="size-[18px]" aria-hidden="true" />
+          <Sparkles className="size-[18px] text-comerza-orange" aria-hidden="true" />
           <h2 id="health-recommendations-title" className="text-[15px] font-bold">
             Antes de crecer
           </h2>
@@ -303,7 +289,7 @@ function CashFlowView({ onContinue }: { onContinue: () => void }) {
         aria-labelledby="cashflow-title"
       >
         <div className="flex items-center gap-3">
-          <span className="flex size-11 items-center justify-center rounded-xl bg-comerza-cyan-soft text-comerza-cyan-dark">
+          <span className="comerza-icon-display flex size-11 items-center justify-center rounded-xl">
             <BarChart3 className="size-5" aria-hidden="true" />
           </span>
           <div>
@@ -380,7 +366,7 @@ function CashFlowView({ onContinue }: { onContinue: () => void }) {
                 onKeyDown={(event) => moveHorizonFocus(event, index)}
                 className={`comerza-focus min-h-11 rounded-md text-xs font-bold outline-none transition-colors ${
                   checked
-                    ? "bg-comerza-navy text-white"
+                    ? "bg-white text-comerza-navy shadow-[inset_0_-3px_0_var(--comerza-cyan)]"
                     : "text-comerza-muted"
                 }`}
               >
@@ -390,7 +376,7 @@ function CashFlowView({ onContinue }: { onContinue: () => void }) {
           })}
         </div>
 
-        <div className="mt-4 rounded-xl border border-comerza-cyan/25 bg-comerza-cyan-soft p-4 text-center" aria-live="polite">
+        <div className="mt-4 rounded-xl border border-comerza-border bg-white p-4 text-center" aria-live="polite">
           <p className="text-xs font-medium text-comerza-muted">Balance proyectado</p>
           <p className="mt-1 text-[28px] font-extrabold tracking-[-0.04em] text-comerza-navy">
             {formatDop(selectedProjection.balance)}
@@ -454,10 +440,10 @@ function ReadinessView({ onContinue }: { onContinue: () => void }) {
         className="comerza-card overflow-hidden"
         aria-labelledby="readiness-title"
       >
-        <div className="border-b border-comerza-cyan/25 bg-comerza-cyan-soft p-5">
+        <div className="border-b border-comerza-border bg-white p-5">
           <div className="flex items-center gap-3">
-            <span className="flex size-11 items-center justify-center rounded-xl bg-comerza-cyan text-comerza-navy">
-              <ShieldCheck className="size-5" aria-hidden="true" />
+            <span className="comerza-icon-display flex size-11 items-center justify-center rounded-xl">
+              <FileCheck2 className="size-5" aria-hidden="true" />
             </span>
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.12em] text-comerza-cyan-dark">
@@ -493,11 +479,11 @@ function ReadinessView({ onContinue }: { onContinue: () => void }) {
       </section>
 
       <section
-        className="rounded-xl border border-comerza-orange/30 bg-comerza-orange-soft p-5"
+        className="comerza-card p-5"
         aria-labelledby="healthy-payment-title"
       >
         <div className="flex items-start gap-3">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-comerza-navy">
+          <span className="comerza-icon-display flex size-10 shrink-0 items-center justify-center rounded-xl">
             <Wallet className="size-5" aria-hidden="true" />
           </span>
           <div>
@@ -512,7 +498,7 @@ function ReadinessView({ onContinue }: { onContinue: () => void }) {
         </div>
       </section>
 
-      <div className="rounded-xl border border-comerza-orange/35 bg-comerza-orange-soft p-4 text-xs leading-[18px] text-[#65430b]">
+      <div className="rounded-xl border border-comerza-border bg-white p-4 text-xs leading-[18px] text-comerza-muted">
         <div className="flex items-start gap-2.5">
           <CircleAlert className="mt-0.5 size-[18px] shrink-0 text-[#9a5700]" aria-hidden="true" />
           <p>Este rango mantiene la cuota dentro de la capacidad mensual observada de tu negocio.</p>
@@ -563,7 +549,7 @@ function HealthRing({ score }: { score: number }) {
 function Recommendation({ children }: { children: ReactNode }) {
   return (
     <li className="flex items-start gap-2.5 text-[13px] leading-5 text-comerza-muted">
-      <CheckCircle2 className="mt-0.5 size-[17px] shrink-0 text-comerza-cyan-dark" aria-hidden="true" />
+      <CheckCircle2 className="mt-0.5 size-[17px] shrink-0 text-comerza-orange" aria-hidden="true" />
       <span>{children}</span>
     </li>
   )
@@ -585,11 +571,8 @@ function MetricRow({
   return (
     <div className="flex min-h-[72px] items-center gap-3 py-3">
       <span
-        className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${
-          accent
-            ? "bg-comerza-orange-soft text-[#a45c00]"
-            : "bg-comerza-cyan-soft text-comerza-cyan-dark"
-        }`}
+        className="comerza-icon-display flex size-10 shrink-0 items-center justify-center rounded-xl"
+        data-accent={accent || undefined}
       >
         {icon}
       </span>
@@ -720,13 +703,13 @@ function InsightCard({
 }) {
   const toneClasses =
     tone === "info"
-      ? "border-comerza-cyan/35 bg-comerza-cyan-soft text-comerza-cyan-dark"
-      : "border-comerza-orange/35 bg-comerza-orange-soft text-[#8a5000]"
+      ? "border-comerza-border bg-white text-comerza-navy"
+      : "comerza-warning-panel text-comerza-navy"
 
   return (
     <section className={`rounded-xl border p-4 ${toneClasses}`}>
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 shrink-0">{icon}</span>
+        <span className="mt-0.5 shrink-0 text-comerza-orange">{icon}</span>
         <div>
           <h2 className="text-[15px] font-bold">{title}</h2>
           <p className="mt-1 text-[13px] leading-5 text-comerza-muted">{text}</p>
@@ -747,7 +730,7 @@ function EvidenceRow({
 }) {
   return (
     <div className="flex min-h-[72px] items-center gap-3 py-3">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-comerza-cyan-soft text-comerza-cyan-dark">
+      <span className="comerza-icon-display flex size-10 shrink-0 items-center justify-center rounded-xl">
         {icon}
       </span>
       <span className="min-w-0 flex-1 text-xs font-medium text-comerza-muted">{label}</span>
@@ -769,7 +752,7 @@ function PrimaryAction({
     <button
       type="button"
       onClick={onClick}
-      className="comerza-primary-action comerza-focus flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-5 text-sm font-bold outline-none transition-colors"
+      className="comerza-primary-action comerza-focus flex min-h-12 w-full items-center justify-center gap-2 rounded-lg px-5 text-sm font-bold outline-none transition-colors"
     >
       {children}
       <ArrowRight className="size-[18px]" aria-hidden="true" />

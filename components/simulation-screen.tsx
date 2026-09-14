@@ -2,10 +2,8 @@
 
 import type { KeyboardEvent } from "react"
 import {
-  ArrowLeft,
   ArrowRight,
   BarChart3,
-  Gauge,
   Lightbulb,
   MapPin,
   MessageCircle,
@@ -28,6 +26,7 @@ import {
 } from "@/lib/demo-data"
 import { cn } from "@/lib/utils"
 import { DecisionProgress } from "@/components/decision-progress"
+import { ScreenHeader } from "@/components/screen-header"
 
 type SimulationScreenProps = {
   selectedNeedId: FundingNeedId
@@ -116,38 +115,14 @@ export function SimulationScreen({
 
   return (
     <div className="min-h-full bg-comerza-canvas pb-8 text-comerza-navy">
-      <header className="comerza-header px-5 pb-7 pt-[max(1rem,env(safe-area-inset-top))]">
-        <button
-          aria-label="Volver a la configuración del caso"
-          className="comerza-focus mb-3 flex size-11 touch-manipulation items-center justify-center rounded-xl bg-white/45 text-comerza-navy ring-1 ring-comerza-navy/10 focus-visible:outline-none"
-          onClick={onBack}
-          type="button"
-        >
-          <ArrowLeft aria-hidden="true" className="size-5" />
-        </button>
+      <ScreenHeader title="Prueba tu financiamiento" onBack={onBack} />
 
-        <div className="flex items-center gap-3">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white/45 ring-1 ring-comerza-navy/10">
-            <Gauge aria-hidden="true" className="size-5" />
-          </span>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-comerza-navy/65">
-              Prueba de capacidad
-            </p>
-            <h1
-              className="text-[1.65rem] font-bold leading-tight outline-none"
-              data-screen-title
-              id="simulation-title"
-              tabIndex={-1}
-            >
-              Prueba tu financiamiento
-            </h1>
-          </div>
-        </div>
+      <div className="space-y-5 px-4 pt-5">
+        <DecisionProgress label="Probar" step={5} />
 
-        <div className="mt-5 rounded-xl bg-white/55 p-4 ring-1 ring-comerza-navy/10">
+        <section className="comerza-card p-4">
           <div className="flex items-center gap-2 text-sm font-bold">
-            <NeedIcon aria-hidden="true" className="size-4 text-comerza-navy" />
+            <NeedIcon aria-hidden="true" className="size-4 text-comerza-orange" />
             {selectedNeedId === "location" && location
               ? `Segunda barbería en ${location.name}`
               : plan.title}
@@ -161,12 +136,8 @@ export function SimulationScreen({
             />
             {location ? <SummaryRow label="Alquiler mensual" value={formatDop(location.rent)} /> : null}
           </dl>
-        </div>
+        </section>
 
-        <DecisionProgress className="mt-5 border-comerza-navy/10 bg-white/70" label="Probar" step={5} />
-      </header>
-
-      <div className="space-y-5 px-4 pt-5">
         <fieldset>
           <legend className="px-1 text-lg font-bold text-comerza-navy">¿Qué podría cambiar?</legend>
           <p className="mt-1 px-1 text-xs leading-5 text-comerza-muted">
@@ -186,7 +157,7 @@ export function SimulationScreen({
                   aria-checked={selected}
                   className={cn(
                     "comerza-focus flex min-h-14 w-full touch-manipulation items-center gap-3 rounded-xl bg-white px-4 py-3 text-left shadow-[0_3px_12px_rgba(0,46,109,0.06)] ring-1 ring-comerza-border transition motion-reduce:transition-none focus-visible:outline-none",
-                    selected && "bg-comerza-cyan-soft ring-2 ring-comerza-cyan",
+                    selected && "bg-white ring-2 ring-comerza-cyan",
                   )}
                   data-scenario-option={scenario.id}
                   onClick={() => onScenarioChange(scenario.id)}
@@ -221,14 +192,11 @@ export function SimulationScreen({
           aria-live="polite"
           className="comerza-card overflow-hidden"
         >
-          <div className="bg-comerza-navy p-5 text-white">
+          <div className="border-b border-comerza-border bg-white p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.13em] text-comerza-cyan">
-                  Resultado estimado
-                </p>
-                <h2 id="result-title" className="mt-1 text-xl font-bold">
-                  {activeScenario.shortLabel}
+                <h2 id="result-title" className="text-xl font-bold text-comerza-navy">
+                  Resultado {activeScenario.shortLabel}
                 </h2>
               </div>
               <span className={cn("rounded-full px-3 py-1.5 text-xs font-bold ring-1", tone.badge)}>
@@ -239,17 +207,17 @@ export function SimulationScreen({
             <div className="mt-5 flex items-center gap-4">
               <ScoreRing color={tone.chart} value={result.resilienceScore} />
               <div className="min-w-0 flex-1">
-                <p className="text-xs text-white/70">{result.resultMetricLabel}</p>
+                <p className="text-xs text-comerza-muted">{result.resultMetricLabel}</p>
                 <p
                   className={cn(
                     "mt-1 break-words text-2xl font-extrabold",
-                    result.monthlyFlow < 0 ? "text-[#ffb3b3]" : "text-white",
+                    result.monthlyFlow < 0 ? "text-[#b72f38]" : "text-comerza-navy",
                   )}
                 >
                   {result.monthlyFlow > 0 ? "+" : ""}
                   {formatDop(result.monthlyFlow)}
                 </p>
-                <p className="mt-1 text-xs leading-5 text-white/70">{result.status}</p>
+                <p className="mt-1 text-xs leading-5 text-comerza-muted">{result.status}</p>
               </div>
             </div>
           </div>
@@ -257,7 +225,7 @@ export function SimulationScreen({
           <div className="p-5">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <BarChart3 aria-hidden="true" className="size-4 text-comerza-navy" />
+                <BarChart3 aria-hidden="true" className="size-4 text-comerza-orange" />
                 <h3 className="text-sm font-bold text-comerza-navy">Impacto en seis meses</h3>
               </div>
               <span className="text-xs font-semibold text-comerza-muted">{result.resultMetricLabel}</span>
@@ -270,15 +238,17 @@ export function SimulationScreen({
               className={cn(
                 "mt-4 rounded-2xl p-4 ring-1",
                 result.isSustainable
-                  ? "bg-[#fff7e9] ring-[#efd49e]"
-                  : "bg-[#fff0f1] ring-[#efc5c8]",
+                  ? "border border-comerza-border bg-white ring-0"
+                  : "comerza-warning-panel ring-0",
               )}
             >
               <div className="flex gap-3">
                 <span
                   className={cn(
-                    "flex size-9 shrink-0 items-center justify-center rounded-xl text-white",
-                    result.isSustainable ? "bg-[#d97f00]" : "bg-[#c8343d]",
+                    "flex size-9 shrink-0 items-center justify-center rounded-xl",
+                    result.isSustainable
+                      ? "comerza-icon-display"
+                      : "bg-[#c8343d] text-white",
                   )}
                 >
                   {result.isSustainable ? (
@@ -291,7 +261,7 @@ export function SimulationScreen({
                   <p
                     className={cn(
                       "text-xs font-bold uppercase tracking-[0.12em]",
-                      result.isSustainable ? "text-[#824900]" : "text-[#9d242c]",
+                      result.isSustainable ? "text-comerza-navy" : "text-[#9d242c]",
                     )}
                   >
                     {result.isSustainable ? "Recomendación Compás" : "Conclusión protectora"}
@@ -299,7 +269,7 @@ export function SimulationScreen({
                   <p
                     className={cn(
                       "mt-1.5 text-sm leading-6",
-                      result.isSustainable ? "text-[#5d431d]" : "text-[#76252b]",
+                      result.isSustainable ? "text-comerza-muted" : "text-[#76252b]",
                     )}
                   >
                     {result.recommendation}
@@ -316,7 +286,7 @@ export function SimulationScreen({
 
             {result.isSustainable ? (
               <button
-                className="comerza-primary-action comerza-focus mt-5 flex min-h-12 w-full touch-manipulation items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold transition active:translate-y-px motion-reduce:transition-none focus-visible:outline-none"
+                className="comerza-primary-action comerza-focus mt-5 flex min-h-12 w-full touch-manipulation items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold transition active:translate-y-px motion-reduce:transition-none focus-visible:outline-none"
                 onClick={onRecommendation}
                 type="button"
               >
@@ -340,7 +310,7 @@ export function SimulationScreen({
                 onClick={onOpenAssistant}
                 type="button"
               >
-                <MessageCircle aria-hidden="true" className="size-4" />
+                <MessageCircle aria-hidden="true" className="size-4 text-comerza-cyan" />
                 Consultar este escenario
               </button>
             )}
@@ -369,11 +339,11 @@ function ScoreRing({ color, value }: { color: string; value: number }) {
       aria-valuenow={value}
       className="grid size-[86px] shrink-0 place-items-center rounded-full p-[7px]"
       role="progressbar"
-      style={{ background: `conic-gradient(${color} ${value * 3.6}deg, rgba(255,255,255,.2) 0deg)` }}
+      style={{ background: `conic-gradient(${color} ${value * 3.6}deg, #e3e5e7 0deg)` }}
     >
-      <div className="flex size-full flex-col items-center justify-center rounded-full bg-comerza-navy">
+      <div className="flex size-full flex-col items-center justify-center rounded-full bg-white text-comerza-navy">
         <span className="text-2xl font-extrabold leading-none">{value}</span>
-        <span className="mt-1 text-xs font-semibold text-white/70">de 100</span>
+        <span className="mt-1 text-xs font-semibold text-comerza-muted">de 100</span>
       </div>
     </div>
   )
@@ -386,7 +356,7 @@ function ScenarioChart({ color, values }: { color: string; values: readonly numb
   const barWidth = Math.min(30, step - 8)
 
   return (
-    <div className="mt-4 rounded-xl bg-comerza-canvas px-2 py-3 ring-1 ring-comerza-border">
+    <div className="mt-4 rounded-xl border border-comerza-border bg-white px-2 py-3">
       <svg
         aria-label={`Proyección mensual: ${values.map((value) => formatDop(value)).join(", ")}`}
         className="h-36 w-full"

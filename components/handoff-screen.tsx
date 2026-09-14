@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import {
   ArrowRight,
   BriefcaseBusiness,
-  CheckCircle2,
+  Check,
   FileCheck2,
   Landmark,
   ShieldCheck,
@@ -102,9 +102,7 @@ export function HandoffScreen({
     <div className="min-h-full bg-comerza-canvas text-comerza-navy">
       <div ref={contentRef} aria-hidden={confirmationOpen || undefined}>
         <ScreenHeader
-          eyebrow="Resumen para evaluación"
           title="Compás preparó tu resumen"
-          subtitle="Revisa los datos de tu plan antes de enviar la solicitud."
           onBack={onBack}
         />
 
@@ -112,8 +110,8 @@ export function HandoffScreen({
           <DecisionProgress step={7} label="Solicitar" />
 
           <section className="comerza-card overflow-hidden">
-            <div className="flex items-center gap-3 border-b border-comerza-cyan/25 bg-comerza-cyan-soft px-5 py-4">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-comerza-cyan text-comerza-navy">
+            <div className="flex items-center gap-3 border-b border-comerza-border bg-white px-5 py-4">
+              <span className="comerza-icon-display flex size-11 shrink-0 items-center justify-center rounded-xl">
                 <FileCheck2 aria-hidden="true" className="size-5" />
               </span>
               <div>
@@ -154,12 +152,12 @@ export function HandoffScreen({
             </dl>
           </section>
 
-          <section className="rounded-xl border border-comerza-orange/35 bg-comerza-orange-soft p-4">
+          <section className="comerza-warning-panel rounded-xl p-4">
             <div className="flex gap-3">
               <ShieldCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-[#9a5b00]" />
               <div>
-                <h2 className="text-sm font-bold text-[#714500]">Antes de continuar</h2>
-                <p className="mt-1.5 text-xs leading-5 text-[#6c5738]">
+                <h2 className="text-sm font-bold text-comerza-navy">Antes de continuar</h2>
+                <p className="mt-1.5 text-xs leading-5 text-comerza-muted">
                   Confirma que el producto, el monto y los datos del plan correspondan a lo que
                   necesita tu negocio.
                 </p>
@@ -170,7 +168,7 @@ export function HandoffScreen({
           <div>
             <button
               ref={launchButtonRef}
-              className="comerza-primary-action comerza-focus flex min-h-12 w-full touch-manipulation items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold transition active:translate-y-px motion-reduce:transition-none focus-visible:outline-none"
+              className="comerza-primary-action comerza-focus flex min-h-12 w-full touch-manipulation items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold transition active:translate-y-px motion-reduce:transition-none focus-visible:outline-none"
               onClick={() => setConfirmationOpen(true)}
               type="button"
             >
@@ -212,15 +210,14 @@ export function HandoffScreen({
               </button>
             </div>
 
-            <div className="mx-auto flex size-16 items-center justify-center rounded-xl bg-comerza-cyan-soft text-comerza-cyan-dark">
-              <CheckCircle2 aria-hidden="true" className="size-8" />
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-comerza-orange/20">
+              <span className="flex size-12 items-center justify-center rounded-full bg-comerza-orange text-white shadow-[0_2px_5px_rgba(165,91,0,0.18)]">
+                <Check aria-hidden="true" className="size-7" strokeWidth={3} />
+              </span>
             </div>
             <div className="mt-4 text-center">
-              <p className="text-xs font-bold uppercase tracking-[0.13em] text-comerza-cyan-dark">
-                Solicitud registrada
-              </p>
-              <h2 id="handoff-confirmation-title" className="mt-2 text-xl font-extrabold text-comerza-navy">
-                Solicitud recibida
+              <h2 id="handoff-confirmation-title" className="text-xl font-extrabold text-comerza-navy">
+                Solicitud Registrada
               </h2>
               <p
                 id="handoff-confirmation-description"
@@ -231,7 +228,7 @@ export function HandoffScreen({
               </p>
             </div>
 
-            <div className="mt-5 rounded-xl bg-comerza-canvas p-4 text-center ring-1 ring-comerza-border">
+            <div className="mt-5 rounded-xl border border-comerza-border bg-white p-4 text-center">
               <p className="text-xs font-semibold text-comerza-muted">Resumen de la solicitud</p>
               <p className="mt-1 text-lg font-extrabold text-comerza-navy">
                 {productName} · {formatDop(financingAmount)}
@@ -239,7 +236,7 @@ export function HandoffScreen({
             </div>
 
             <button
-              className="comerza-primary-action comerza-focus mt-5 min-h-12 w-full touch-manipulation rounded-xl px-4 text-sm font-bold focus-visible:outline-none"
+              className="comerza-primary-action comerza-focus mt-5 min-h-12 w-full touch-manipulation rounded-lg px-4 text-sm font-bold focus-visible:outline-none"
               onClick={() => setConfirmationOpen(false)}
               type="button"
             >
@@ -266,7 +263,7 @@ function SummaryRow({
   return (
     <div className="flex items-center gap-3 py-4">
       <dt className="flex min-w-0 flex-1 items-center gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-comerza-cyan-soft text-comerza-cyan-dark">
+        <span className="comerza-icon-display flex size-10 shrink-0 items-center justify-center rounded-xl">
           <Icon aria-hidden="true" className="size-5" />
         </span>
         <span className="min-w-0">

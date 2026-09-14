@@ -60,9 +60,7 @@ export function FundingGoalScreen({
   return (
     <div className="min-h-full bg-comerza-canvas pb-8 text-comerza-navy">
       <ScreenHeader
-        eyebrow="Elige tu objetivo"
         title="¿Qué quieres financiar?"
-        subtitle="Selecciona una necesidad para preparar un caso y probar cómo afectaría la caja de tu negocio."
       />
 
       <div className="space-y-5 px-4 pt-5">
@@ -88,7 +86,7 @@ export function FundingGoalScreen({
                 className={cn(
                   "comerza-focus flex min-h-[88px] w-full items-start gap-3 rounded-xl border bg-white p-4 text-left transition-colors",
                   selected
-                    ? "border-comerza-cyan bg-comerza-cyan-soft ring-1 ring-comerza-cyan"
+                    ? "border-comerza-cyan bg-white ring-1 ring-comerza-cyan"
                     : "border-comerza-border hover:border-comerza-cyan",
                 )}
                 onClick={() => onNeedChange(match.needId)}
@@ -97,14 +95,7 @@ export function FundingGoalScreen({
                 tabIndex={selected ? 0 : -1}
                 type="button"
               >
-                <span
-                  className={cn(
-                    "flex size-11 shrink-0 items-center justify-center rounded-xl",
-                    selected
-                      ? "bg-comerza-cyan text-comerza-navy"
-                      : "bg-comerza-canvas text-comerza-navy",
-                  )}
-                >
+                <span className="comerza-icon-action flex size-11 shrink-0 items-center justify-center rounded-xl">
                   <Icon aria-hidden="true" className="size-5" />
                 </span>
                 <span className="min-w-0 flex-1">
@@ -129,7 +120,7 @@ export function FundingGoalScreen({
         </div>
 
         <button
-          className="comerza-primary-action comerza-focus flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold"
+          className="comerza-primary-action comerza-focus flex min-h-12 w-full items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold"
           onClick={onContinue}
           type="button"
         >

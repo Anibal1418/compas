@@ -34,9 +34,7 @@ export function FundingPlanScreen({
   return (
     <div className="min-h-full bg-comerza-canvas pb-8 text-comerza-navy">
       <ScreenHeader
-        eyebrow="Configura el caso"
         title={plan.title}
-        subtitle="Revisa los datos de tu plan antes de evaluar su impacto en la caja."
         onBack={onBack}
       />
 
@@ -44,7 +42,7 @@ export function FundingPlanScreen({
         <DecisionProgress step={4} label="Configurar" />
 
         <section className="comerza-card overflow-hidden" aria-labelledby="plan-summary-title">
-          <div className="border-b border-comerza-border bg-comerza-cyan-soft p-5">
+          <div className="border-b border-comerza-border bg-white p-5">
             <p className="text-xs font-bold uppercase tracking-[0.12em] text-comerza-cyan-dark">
               Plan seleccionado
             </p>
@@ -83,12 +81,12 @@ export function FundingPlanScreen({
         ) : null}
 
         {prerequisiteConfirmed === false ? (
-          <section className="rounded-xl border border-comerza-orange/35 bg-comerza-orange-soft p-4">
+          <section className="comerza-warning-panel rounded-xl p-4">
             <div className="flex gap-3">
               <CircleAlert aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-[#9a5700]" />
               <div>
                 <h2 className="text-sm font-bold">Necesitamos confirmar esta información</h2>
-                <p className="mt-1 text-xs leading-5 text-[#65430b]">
+                <p className="mt-1 text-xs leading-5 text-comerza-muted">
                   Para evaluar el plan, confirma primero que esta necesidad corresponde a tu negocio.
                 </p>
               </div>
@@ -97,7 +95,7 @@ export function FundingPlanScreen({
         ) : null}
 
         <button
-          className="comerza-primary-action comerza-focus flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold disabled:cursor-not-allowed disabled:bg-[#b7c1cb] disabled:shadow-none"
+          className="comerza-primary-action comerza-focus flex min-h-12 w-full items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold disabled:cursor-not-allowed disabled:bg-[#b7c1cb] disabled:shadow-none"
           disabled={!canAct}
           onClick={prerequisiteConfirmed === false ? onBack : onSimulate}
           type="button"
@@ -107,7 +105,7 @@ export function FundingPlanScreen({
         </button>
 
         <div className="flex items-start gap-2 rounded-xl border border-comerza-border bg-white p-4 text-xs leading-5 text-comerza-muted">
-          <ShieldCheck aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-comerza-cyan-dark" />
+          <ShieldCheck aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-comerza-orange" />
           La reserva mensual ayuda a medir tu capacidad de pago; la cuota final dependerá de la evaluación del producto.
         </div>
       </div>
@@ -141,7 +139,7 @@ function ConfirmationQuestion({
               className={cn(
                 "comerza-focus min-h-11 rounded-lg border text-sm font-bold",
                 selected
-                  ? "border-comerza-cyan bg-comerza-cyan-soft text-comerza-navy"
+                  ? "border-comerza-cyan bg-white text-comerza-navy ring-1 ring-comerza-cyan"
                   : "border-comerza-border bg-white text-comerza-muted",
               )}
               onClick={() => onChange(option)}
@@ -174,9 +172,9 @@ function PlanRow({ label, value }: { label: string; value: string }) {
     <div className="flex min-h-14 items-center gap-3 py-3">
       <dt className="flex min-w-0 flex-1 items-center gap-2 text-xs font-medium text-comerza-muted">
         {label === "Financiamiento a evaluar" ? (
-          <Landmark aria-hidden="true" className="size-4 shrink-0 text-comerza-navy" />
+          <Landmark aria-hidden="true" className="size-4 shrink-0 text-comerza-orange" />
         ) : (
-          <WalletCards aria-hidden="true" className="size-4 shrink-0 text-comerza-navy" />
+          <WalletCards aria-hidden="true" className="size-4 shrink-0 text-comerza-orange" />
         )}
         {label}
       </dt>

@@ -66,22 +66,14 @@ export function AssistantScreen() {
   return (
     <div className="min-h-full bg-comerza-canvas">
       <ScreenHeader
-        eyebrow="Tu guía financiera"
         title="Habla con Compás"
-        subtitle="Respuestas basadas en la situación actual de tu barbería."
-        action={(
-          <span className="flex items-center gap-1.5 rounded-full bg-white/55 px-2.5 py-1.5 text-xs font-semibold text-comerza-navy ring-1 ring-comerza-navy/10">
-            <span className="size-1.5 rounded-full bg-comerza-cyan" />
-            Disponible
-          </span>
-        )}
       />
 
       <div className="relative -mt-3 rounded-t-[20px] bg-comerza-canvas px-4 pb-5 pt-5">
         {messages.length === 1 && (
           <section className="mb-5" aria-labelledby="suggested-questions-title">
             <div className="mb-3 flex items-center gap-2">
-              <Sparkles className="size-4 text-compas" aria-hidden="true" />
+              <Sparkles className="size-4 text-comerza-orange" aria-hidden="true" />
               <h2 id="suggested-questions-title" className="text-sm font-bold text-primary">Preguntas sugeridas</h2>
             </div>
             <div className="space-y-2">
